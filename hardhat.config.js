@@ -19,4 +19,11 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
  */
 module.exports = {
   solidity: "0.8.4",
+  networks: {
+    hardhat: {
+      forking: {
+        url: "https://eth-mainnet.alchemyapi.io/v2/a5205356b09f40f0ba4c3ad575d2ce15"
+      }
+    }
+  }
 };
