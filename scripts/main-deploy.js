@@ -15,7 +15,7 @@ async function main() {
 
   // We get the contract to deploy
   const MixStake  = await hre.ethers.getContractFactory("MixStake");
-  const stacker = await MixStake.deploy(0xe1f646250ec7584d2853e3e709c54dceaf537e94);
+  const stacker = await MixStake.deploy(address(0xe1f646250ec7584d2853e3e709c54dceaf537e94));
 
   await stacker.deployed();
 

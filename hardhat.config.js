@@ -1,15 +1,16 @@
 require("@nomiclabs/hardhat-waffle");
 require("hardhat-gas-reporter");
 
-// This is a sample Hardhat task. To learn how to create your own go to
-// https://hardhat.org/guides/create-task.html
-task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
-  const accounts = await hre.ethers.getSigners();
+// Go to https://www.alchemyapi.io, sign up, create
+// a new App in its dashboard, and replace "KEY" with its key
+const ALCHEMY_API_KEY = "NVgrQel1OBUqs9MoL3bP63YpcRpg_qBP";
 
-  for (const account of accounts) {
-    console.log(account.address);
-  }
-});
+// Replace this private key with your Ropsten account private key
+// To export your private key from Metamask, open Metamask and
+// go to Account Details > Export Private Key
+// Be aware of NEVER putting real Ether into testing accounts
+const RINKEBY_PRIVATE_KEY = "af963ddbeb015fe23683c5d1618450ded391542c3e9b67da5f286d390595a6a5";
+
 
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
@@ -20,10 +21,9 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 module.exports = {
   solidity: "0.8.4",
   networks: {
-    hardhat: {
-      forking: {
-        url: "https://eth-mainnet.alchemyapi.io/v2/a5205356b09f40f0ba4c3ad575d2ce15"
-      }
-    }
-  }
+    rinkeby: {
+      url: `https://eth-rinkeby.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
+      accounts: [`0x${RINKEBY_PRIVATE_KEY}`],
+    },
+  },
 };
