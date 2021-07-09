@@ -47,7 +47,7 @@ contract MixStake is Ownable, ReentrancyGuard {
     console.log("MixStake contract created for token: %s",  _stakeToken );
   }
 
-  /// -------------------  EXTERNAL, PUBLIC, VIEW  -------------------  
+  /// -------------------  EXTERNAL, PUBLIC, VIEW, HELPERS  -------------------  
   function periods() public pure returns (uint16[6] memory) {
     return [ 7, 14, 30, 60, 180, 300 ];  
   }
@@ -56,9 +56,9 @@ contract MixStake is Ownable, ReentrancyGuard {
     return [ 0, 2, 5, 10, 20, 30 ];  
   }
 
-  function periodStakeConfig(uint periodIndex) public pure returns (uint16 periodDays, uint16 bonusAPY) {
-    periodDays = periods()[periodIndex];
-    bonusAPY = bonuses()[periodIndex];
+  function userStakeInfo() public view returns (UserStake memory)
+  {
+    return usersStake[msg.sender];
   }
 
   function calcUserStakeRewards(uint amount, uint periodDays, uint periodAPY,  uint bonusAPY, uint daysLeft) public pure returns (uint rewards) {
@@ -66,8 +66,7 @@ contract MixStake is Ownable, ReentrancyGuard {
     rewards = calcDays * amount * periodAPY/100/365 + calcDays * amount * bonusAPY/100/365;
   }
 
-  /// -------------------  INTERNALS --------------------------------------
-  // returns how many tokens can owner withdraw 
+    // returns how many tokens can owner withdraw 
   function freeAmount() public view returns (uint) {
     return IERC20(stakeToken).balanceOf(address(this)) - rewardsReserved - totalStackedAmount;
   }
@@ -76,7 +75,9 @@ contract MixStake is Ownable, ReentrancyGuard {
   function stake(uint amount, uint16 periodIndex) nonReentrant external{
     require( usersStake[msg.sender].amount == 0, "Sender has active stacking");
     require( periodIndex < periods().length, "Incorrect period index" );
-    (uint periodDays, uint bonusAPY) = periodStakeConfig(periodIndex);
+
+    uint periodDays = periods()[periodIndex];
+    uint bonusAPY = bonuses()[periodIndex];    
     uint rewards = calcUserStakeRewards(amount, periodDays, apy, bonusAPY, periodDays);
 
     console.log( "periods: %s days, free tokens amount: %s, future rewards: %s", periodDays, freeAmount(), rewards );
@@ -119,12 +120,6 @@ contract MixStake is Ownable, ReentrancyGuard {
 
     emit Stacked( user.amount, periodDays, rewards );    
   }
-
-  function userStakeInfo() public view returns (UserStake memory)
-  {
-    return usersStake[msg.sender];
-  }
-
 
   /// ------------------- EXTERNAL OWNER FUNCTIONS -------------------
   function setAPY(uint16 newValue) onlyOwner external {
