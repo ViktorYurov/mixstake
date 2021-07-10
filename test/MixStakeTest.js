@@ -1,5 +1,6 @@
 const { Contract, ContractFactory } = require("@ethersproject/contracts");
-const { expect } = require("chai");
+
+const { expect } = require('chai');
 
 describe("MixStake", function () {
 
@@ -48,14 +49,15 @@ describe("MixStake", function () {
   it("Double stake", async function () {
 
     // deployer send tokens to contract
-    var initForStakeAmount = 500;
+    const initForStakeAmount =  500;
     await this.token.transfer(this.stake.address, initForStakeAmount);
     var _stakeBalance = await this.token.balanceOf(this.stake.address);
+    console.log(_stakeBalance);
     console.log("MixStake contract balance after transfer: " + _stakeBalance);
-    //expect(_stakeBalance).to.equal(initForStakeAmount);       
+    expect(_stakeBalance).to.equal(initForStakeAmount);       
     var _deployerBalance = await this.token.balanceOf(this.deployer.address);
     console.log("Deployer balance after transfer: " + _deployerBalance);
-    //expect(_deployerBalance).to.equal(this.initMinted - initForStakeAmount);       
+    expect(_deployerBalance).to.equal(this.initMinted - initForStakeAmount);       
 
     // send tokens to user1
     var initForUserAmount = 100;
@@ -159,7 +161,7 @@ describe("MixStake", function () {
     // ONE USER STAKING
 
     // user send tokens to stacking
-    var stakeAmount = 50;
+    var stakeAmount = '50';
     await this.token.connect(this.user1).approve(this.stake.address,stakeAmount);
     await this.stake.connect(this.user1).stake(stakeAmount,3);
 
@@ -190,7 +192,7 @@ describe("MixStake", function () {
 
     // 3 USERS STACKING
     // user send tokens to stacking
-    var stakeAmount = 50;
+    var stakeAmount = '50';
     var _user1BalanceBefore = await this.token.balanceOf(this.user1.address);    
     await this.token.connect(this.user1).approve(this.stake.address,stakeAmount);
     await this.stake.connect(this.user1).stake(stakeAmount,0); // 7 days
