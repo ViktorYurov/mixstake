@@ -14,8 +14,13 @@ async function main() {
   // await hre.run('compile');
 
   // We get the contract to deploy
+  const tokenAddress = "0xe1f646250ec7584d2853e3e709c54dceaf537e94";
+  const StakedToken  = await hre.ethers.getContractFactory("ERC20");
+  const token = await StakedToken.attach( tokenAddress );
+  console.log("Attached to token: %s", token.address);
+
   const MixStake  = await hre.ethers.getContractFactory("MixStake");
-  const stacker = await MixStake.deploy(address(0xe1f646250ec7584d2853e3e709c54dceaf537e94));
+  const stacker = await MixStake.deploy(token.address);
 
   await stacker.deployed();
 
