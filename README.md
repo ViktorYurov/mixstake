@@ -17,8 +17,8 @@ Project are developed with hardhat framework. You have to install it by command:
 npm i hardhat
 
 ## Prerequisites
-1. Node.js version 16.4.2 or higher
-2. hardhat
+Node.js (version 16.4.2 or higher recomended)
+Infura API key (for deploy contract to live networks)
 
 ## Commands
 
@@ -35,5 +35,5 @@ npx hardhat node --fork <url>
 npx hardhat run scripts/test-deploy.js
 
 ### Deploy to live network (see https://hardhat.org/tutorial/deploying-to-a-live-network.html)
-Before deploy you have to change tokenAddress in main-deploy.js (set your token address)
+Before deploy you have to change tokenAddress in main-deploy.js (set your appropriate token address)
 npx hardhat run scripts/main-deploy.js --network <any network, that you can add to hardhat.config.js> 
