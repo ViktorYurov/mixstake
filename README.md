@@ -28,11 +28,12 @@ npx hardhat test
 ### Run local node
 npx hardhat node
 
-### Run in fork
+### Run in fork (see https://hardhat.org/guides/mainnet-forking.html)
 npx hardhat node --fork <url>
   
 ### Deploy to local hardhat node
 npx hardhat run scripts/test-deploy.js
 
-### Deploy to live network (see https://hardhat.org/guides/deploying.html)
+### Deploy to live network (see https://hardhat.org/tutorial/deploying-to-a-live-network.html)
+Before deploy you have to change tokenAddress in main-deploy.js (set your token address)
 npx hardhat run scripts/main-deploy.js --network <any network, that you can add to hardhat.config.js> 
