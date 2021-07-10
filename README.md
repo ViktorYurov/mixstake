@@ -7,10 +7,10 @@
 This is simple contract that provide ability to stake any ERC20 token for one of pre-defined time periods in days (7,14,30,60,100,300). Each period has its own bonus (0, 2, 5, 10, 20, 30). The final user rewords for selected period calculated by formula: R = amount * (days * (APY + bonus) / 100 / 365).
 
 ## Before start
-Before stacking owner has to set APY and transfer some amount of tokens to the contract for future reward claimings. Otherwise stake() call will be reverted with error. The contract has parameter APY owner can change APY at any time, but new APY value will be applied for only new stakings. MixStake contract has ability to transfer ownership (see transferOwnership() function) and withdraw (see withdraw() function) free tokens (not reserved for rewards). 
+Before staking owner has to set APY and transfer some amount of tokens to the contract for future reward claimings. Otherwise stake() call will be reverted with error. The contract has parameter APY owner can change APY at any time, but new APY value will be applied for only new stakings. MixStake contract has ability to transfer ownership (see transferOwnership() function) and withdraw (see withdraw() function) free tokens (not reserved for rewards). 
 
 ## Staking
-User call stake() function for start stacking and unstake() function after period has been ended. 
+User call stake() function for start staking and unstake() function after period has been ended. 
 
 ## How to play with it?
 Project are developed with hardhat framework. You have to install it by command:

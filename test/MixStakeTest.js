@@ -69,7 +69,7 @@ describe("MixStake", function () {
     console.log("user1 balance after transfer: " + _userBalance);
     expect(_userBalance).to.equal(initForUserAmount);       
 
-    // user send tokens to stacking
+    // user send tokens to staking
     var stakeAmount = 50;
     await this.token.connect(this.user1).approve(this.stake.address,stakeAmount);
     await this.stake.connect(this.user1).stake(stakeAmount,3);
@@ -79,7 +79,7 @@ describe("MixStake", function () {
     await this.token.connect(this.user1).approve(this.stake.address,stakeAmount);    
     await expect(
       this.stake.connect(this.user1).stake(stakeAmount,1)
-    ).to.be.revertedWith("Sender has active stacking");        
+    ).to.be.revertedWith("Sender has active staking");        
 
     console.log( "Second call stake reverted!" );    
 
@@ -105,7 +105,7 @@ describe("MixStake", function () {
     console.log("user1 balance after transfer: " + _userBalance);
     expect(_userBalance).to.equal(initForUserAmount);       
 
-    // user send tokens to stacking
+    // user send tokens to staking
     var stakeAmount = 50;
     await this.token.connect(this.user1).approve(this.stake.address,stakeAmount);
     await this.stake.connect(this.user1).stake(stakeAmount,3);
@@ -122,13 +122,13 @@ describe("MixStake", function () {
 
     await expect(
       this.stake.connect(this.user1).unstake()
-    ).to.be.revertedWith("Sender has no active stacking");        
+    ).to.be.revertedWith("Sender has no active staking");        
 
     console.log( "Second call unstake reverted!" ); 
 
   });  
 
-  it("COMPLEX TEST. Stacking full cycle with owner withdraw", async function () {
+  it("COMPLEX TEST. Staking full cycle with owner withdraw", async function () {
 
     // deployer send tokens to contract
     var initForStakeAmount = 500;
@@ -160,7 +160,7 @@ describe("MixStake", function () {
 
     // ONE USER STAKING
 
-    // user send tokens to stacking
+    // user send tokens to staking
     var stakeAmount = '50';
     await this.token.connect(this.user1).approve(this.stake.address,stakeAmount);
     await this.stake.connect(this.user1).stake(stakeAmount,3);
@@ -179,7 +179,7 @@ describe("MixStake", function () {
     await this.token.connect(this.user1).approve(this.stake.address,stakeAmount);    
     await expect(
       this.stake.connect(this.user1).unstake()
-    ).to.be.revertedWith("Stacking period is not finished yet");  
+    ).to.be.revertedWith("Staking period is not finished yet");  
     console.log("Unstake before period has left cause revert. Its ok");
 
     // emulate 60 days after
@@ -190,8 +190,8 @@ describe("MixStake", function () {
     await this.token.connect(this.user1).approve(this.stake.address,stakeAmount);    
     await this.stake.connect(this.user1).unstake();      
 
-    // 3 USERS STACKING
-    // user send tokens to stacking
+    // 3 USERS STAKING
+    // user send tokens to staking
     var stakeAmount = '50';
     var _user1BalanceBefore = await this.token.balanceOf(this.user1.address);    
     await this.token.connect(this.user1).approve(this.stake.address,stakeAmount);

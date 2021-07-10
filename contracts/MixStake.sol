@@ -10,7 +10,7 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 import "hardhat/console.sol";
 
-/// @notice one user stacking information (amount, apy, period index and starting time)
+/// @notice one user staking information (amount, apy, period index and starting time)
 struct UserStake
 {
   uint amount;
@@ -19,30 +19,30 @@ struct UserStake
   uint256 started;
 }
 
-/// @title Solo-stacking token contract
-/// @notice Stacking token for one of pre-defined periods with different rewards and bonus APY. 
+/// @title Solo-staking token contract
+/// @notice Staking token for one of pre-defined periods with different rewards and bonus APY. 
 contract MixStake is Ownable, ReentrancyGuard {
   using SafeERC20 for IERC20;  
 
   //ISwapRouter constant ROUTER = ISwapRouter(0xe5cff588c5225d5519b6a9c53d05b1c8fdd65d17);
   //address constant FACTORY = address(0x5d86475e1fc3788d6dad39facb25241587c90698);    
 
-  mapping(address => UserStake) usersStake; // users stacking information
+  mapping(address => UserStake) usersStake; // users staking information
 
-  address public stakeToken;  // address of stack token
+  address public stakeToken;  // address of token
   uint16 public apy;            // current APY of rewards
-  uint public rewardsReserved; // future rewards for current stacking
-  uint public totalStackedAmount; // total stacked amount (without rewards)
+  uint public rewardsReserved; // future rewards for current staking
+  uint public totalStakedAmount; // total staked amount (without rewards)
 
-  event Stacked(uint indexed amount, uint indexed period, uint indexed futureRewards);  
-  event Unstacked(uint indexed amount, uint indexed rewards);    
+  event Staked(uint indexed amount, uint indexed period, uint indexed futureRewards);  
+  event Unstaked(uint indexed amount, uint indexed rewards);    
 
     /// @notice Creates a contract
-    /// @param _stakeToken is stacked token address
+    /// @param _stakeToken is staked token address
   constructor(address _stakeToken) {
     stakeToken = _stakeToken;
     rewardsReserved = 0;
-    totalStackedAmount = 0;
+    totalStakedAmount = 0;
 
     console.log("MixStake contract created for token: %s",  _stakeToken );
   }
@@ -68,12 +68,12 @@ contract MixStake is Ownable, ReentrancyGuard {
 
     // returns how many tokens can owner withdraw 
   function freeAmount() public view returns (uint) {
-    return IERC20(stakeToken).balanceOf(address(this)) - rewardsReserved - totalStackedAmount;
+    return IERC20(stakeToken).balanceOf(address(this)) - rewardsReserved - totalStakedAmount;
   }
 
   /// -------------------  EXTERNAL, PUBLIC, STATE CHANGE -------------------
   function stake(uint amount, uint16 periodIndex) nonReentrant external{
-    require( usersStake[msg.sender].amount == 0, "Sender has active stacking");
+    require( usersStake[msg.sender].amount == 0, "Sender has active staking");
     require( periodIndex < periods().length, "Incorrect period index" );
 
     uint periodDays = periods()[periodIndex];
@@ -88,37 +88,37 @@ contract MixStake is Ownable, ReentrancyGuard {
     IERC20(stakeToken).approve(msg.sender, amount);
     IERC20(stakeToken).safeTransferFrom(msg.sender, address(this), amount);    
 
-    totalStackedAmount += amount;
+    totalStakedAmount += amount;
     rewardsReserved += rewards;
 
     UserStake memory newStake = UserStake({amount: amount, apy: apy, periodIndex: periodIndex, started: block.timestamp });
     usersStake[msg.sender] = newStake;
 
-    emit Stacked( amount, periodDays, rewards );
+    emit Staked( amount, periodDays, rewards );
 
-    console.log("User %s has been stacked for %s for period of %s days", msg.sender, amount, periodDays );
+    console.log("User %s has been staked for %s for period of %s days", msg.sender, amount, periodDays );
   }
 
   function unstake() nonReentrant external {
-    require( usersStake[msg.sender].amount > 0, "Sender has no active stacking");    
+    require( usersStake[msg.sender].amount > 0, "Sender has no active staking");    
     UserStake storage user  = usersStake[msg.sender];    
     uint timeInDays = (block.timestamp - user.started) / 60 / 60 / 24;
-    console.log("Stacking period in days - %s", timeInDays );
+    console.log("Staking period in days - %s", timeInDays );
     uint periodDays = periods()[user.periodIndex];
-    require(timeInDays >= periodDays, "Stacking period is not finished yet" );
+    require(timeInDays >= periodDays, "Staking period is not finished yet" );
 
     uint bonusAPY = bonuses()[user.periodIndex];
     uint rewards = calcUserStakeRewards(user.amount, periodDays, user.apy, bonusAPY, periodDays);
 
     IERC20(stakeToken).safeTransfer(msg.sender, user.amount + rewards );        
-    totalStackedAmount -= user.amount;
+    totalStakedAmount -= user.amount;
     rewardsReserved -= rewards;
 
-    console.log("User has been unstacked %s  after period of %s days and claim %s tokens", user.amount, periodDays, rewards );    
+    console.log("User has been unstaked %s  after period of %s days and claim %s tokens", user.amount, periodDays, rewards );    
 
     delete usersStake[msg.sender];
 
-    emit Stacked( user.amount, periodDays, rewards );    
+    emit Staked( user.amount, periodDays, rewards );    
   }
 
   /// ------------------- EXTERNAL OWNER FUNCTIONS -------------------
