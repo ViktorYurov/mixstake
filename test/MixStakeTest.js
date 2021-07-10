@@ -52,7 +52,7 @@ describe("MixStake", function () {
     const initForStakeAmount =  500;
     await this.token.transfer(this.stake.address, initForStakeAmount);
     var _stakeBalance = await this.token.balanceOf(this.stake.address);
-    console.log(_stakeBalance);
+
     console.log("MixStake contract balance after transfer: " + _stakeBalance);
     expect(_stakeBalance).to.equal(initForStakeAmount);       
     var _deployerBalance = await this.token.balanceOf(this.deployer.address);
